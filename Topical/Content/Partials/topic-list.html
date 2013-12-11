@@ -1,0 +1,13 @@
+﻿<dl ng-repeat="topic in topics">
+    <dt class="topic">
+        <a class="h4"  ng-href="{{topic | topicLink}}">{{topic.title}}</a>
+    </dt>
+    <dd class="row">
+        <div class="col-xs-2 col-sm-1">
+            <a ng-href="{{topic | topicCommentsLink}}"><strong>Discuss</strong></a>
+        </div>
+        <ul class="list-inline col-xs-10 col-sm-11">
+            <li ng-repeat="tag in topic.tags | limitTo: 4"><span class="label label-default">{{tag}}</span></li>
+        </ul>
+    </dd>
+</dl>
