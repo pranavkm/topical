@@ -1,5 +1,19 @@
-﻿<h2><a ng-href="/{{topic | topicLink}}">{{topic.title}}</a></h2>
+﻿<h3><a ng-href="{{topic | topicLink}}">{{topic.title}}</a></h3>
 
-<ul class="tags" ng-repeat="tag in topic.tags">
-    <li>{{tag}}</li>
+<ul class="list-inline">
+    <li ng-repeat="tag in topic.tags">
+        <span class="label label-default">{{tag}}</span>
+    </li>
 </ul>
+
+<div>
+    <form role="form" name="addCommentForm" ng-controller="addComment" novalidate ng-submit="sendForm()">
+        <div class="form-group" ng-class="{'has-error': (addCommentForm.comment.$dirty || submitted) && addCommentForm.comment.$invalid}">
+            <textarea name="comment" id="comment" ng-model="comment.text" class="form-control" required></textarea>
+            <div class="comment-preview" ng-show="comment.text" ng-bind-html="comment.text | markdown"></div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-success btn-xs" type="submit">Comment</button>
+        </div>
+    </form>
+</div>

@@ -12,7 +12,7 @@ namespace Topical
         public static void Configure(HttpConfiguration httpConfiguration)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(new LuceneProvider(HostingEnvironment.MapPath("~/")))
+            builder.RegisterInstance(new LuceneProvider(HostingEnvironment.MapPath("~/App_Data")))
                    .SingleInstance();
 
             builder.RegisterType<TopicService>()

@@ -9,6 +9,7 @@
     <div class="form-group">
         <label for="description">Description</label>
         <textarea class="form-control" rows="4" id="description" ng-model="topic.description"></textarea>
+        <div class="comment-preview" ng-show="topic.description" ng-bind-html="topic.description | markdown"></div>
     </div>
     <div class="form-group">
         <label for="url">Link</label>

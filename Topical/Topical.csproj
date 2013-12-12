@@ -87,13 +87,16 @@
   <ItemGroup>
     <Content Include="Content\images\topical.png" />
     <Content Include="Content\Partials\topic-create.html" />
+    <Content Include="Content\Partials\topic-link.html" />
     <Content Include="Content\Partials\topic-view.html" />
     <Content Include="Content\Partials\topic-list.html" />
     <Content Include="Content\Scripts\app.js" />
     <Content Include="Content\Scripts\controllers.js" />
+    <Content Include="Content\Scripts\directives.js" />
     <Content Include="Content\Scripts\filters.js" />
     <Content Include="Content\Scripts\services.js" />
-    <Content Include="Content\Scripts\util.js" />
+    <Content Include="Content\Scripts\utils.js" />
+    <Content Include="Content\styles\app.css" />
     <Content Include="Global.asax" />
     <Content Include="index.html" />
     <Content Include="Web.config" />
@@ -116,7 +119,6 @@
     <Compile Include="Repository\IndexFilterCriteria.cs" />
     <Compile Include="Repository\IndexMetadata.cs" />
     <Compile Include="Repository\LuceneProvider.cs" />
-    <Compile Include="Repository\LuceneQueryProvider.cs" />
     <Compile Include="Services\CommentService.cs" />
     <Compile Include="Services\ICommentService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

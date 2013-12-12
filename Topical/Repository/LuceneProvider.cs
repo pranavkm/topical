@@ -33,6 +33,23 @@ namespace Topical.Repository
             writer.Commit();
         }
 
+        public TEntity GetRecord<TEntity>(string id)
+        {
+            Query query = new TermQuery(new Term("Id", id));
+            var reader = IndexReader.Open(GetIndexDirectory<TEntity>(), readOnly: true);
+            using (var indexSearcher = new IndexSearcher(reader))
+            {
+                TopDocs docs = indexSearcher.Search(query, 1);
+                if (docs.TotalHits > 0)
+                {
+                    Document doc = reader.Document(docs.ScoreDocs[0].Doc);
+                    return _entityMapper.MapFromDocument<TEntity>(doc);
+                }
+            }
+
+            return default(TEntity);
+        }
+
         public IEnumerable<TEntity> GetRecords<TEntity>(Query query = null, int n = 20)
         {
             var reader = IndexReader.Open(GetIndexDirectory<TEntity>(), readOnly: true);

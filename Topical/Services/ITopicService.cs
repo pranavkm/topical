@@ -8,6 +8,8 @@ namespace Topical.Services
     {
         void Create(Topic topic);
 
+        Topic GetTopic(string topicId);
+
         IEnumerable<Topic> GetTopics();
     }
 }

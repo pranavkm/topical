@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Topical.Models;
 using Topical.Repository;
 
@@ -17,12 +20,14 @@ namespace Topical.Services
         public void Create(Topic topic)
         {
             topic.Id = IdProvider.GenerateTopicId();
+            topic.CreatedOn = DateTimeOffset.UtcNow;
+            topic.LastModifiedOn = DateTimeOffset.UtcNow;
             _dbProvider.AddRecord(topic);
         }
 
         public virtual Topic GetTopic(string id)
         {
-            return null;
+            return _dbProvider.GetRecord<Topic>(id);
         }
 
         public virtual IEnumerable<Topic> GetTopics()

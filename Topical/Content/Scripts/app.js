@@ -21,7 +21,6 @@
                 templateUrl: "content/partials/topic-view.html",
                 controller: "viewTopic"
             })
-        
         }
     ])
 

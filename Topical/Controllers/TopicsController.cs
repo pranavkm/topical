@@ -22,10 +22,15 @@ namespace Topical.Controllers
         //}
 
         //// GET api/Topical/5
-        //public Topic GetTopic(string id)
-        //{
-        //    return _topicService.Get(id);
-        //}
+        public IHttpActionResult GetTopic(string id)
+        {
+            var topic = _topicService.GetTopic(id);
+            if (topic == null)
+            {
+                return NotFound();
+            }
+            return Ok(topic);
+        }
 
         public IHttpActionResult CreateTopic(Topic topic)
         {

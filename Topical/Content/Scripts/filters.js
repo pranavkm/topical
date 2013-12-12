@@ -1,16 +1,21 @@
 ﻿(function () {
-    angular.module("filters", [])
-        .filter("topicLink", function () {
+    angular.module("filters", ["utils"])
+        .filter("topicLink", ["utils", function (utils) {
             return function (topic) {
-                return topic.url || topicCommentsLink(topic);
-
+                return topic.url || utils.topicCommentsLink(topic);
             }
-        })
-        .filter("topicCommentsLink", function () {
+        }])
+        .filter("topicCommentsLink", ["utils", function (utils) {
             return function (topic) {
-                return _topicCommentsLink(topic);
+                return utils.topicCommentsLink(topic);
             }
-        })
+        }])
+        .filter("markdown", ["$sce", function ($sce) {
+            var converter = new Showdown.converter();
+            return function (text) {
+                return text && $sce.trustAsHtml(converter.makeHtml(text));
+            }
+        }])
 })();
 
 
