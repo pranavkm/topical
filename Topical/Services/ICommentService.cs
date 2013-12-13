@@ -5,6 +5,6 @@ namespace Topical.Services
 {
     public interface ICommentService
     {
-        //Task Add(string topicId, string parentCommentId, Comment comment);
+        void Create(Comment comment);
     }
 }

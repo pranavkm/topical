@@ -1,8 +1,8 @@
 ﻿angular.module("controllers", ["utils"])
-    .controller("listTopics", ["$scope", "topicServices", function ($scope, topicService) {
-        $scope.topics = topicService.topic.query();
+    .controller("listTopics", ["$scope", "services", function ($scope, services) {
+        $scope.topics = services.topic.query();
     }])
-    .controller("createTopic", ["$scope", "$location", "topicServices", "utils", function ($scope, $location, topicService, utils) {
+    .controller("createTopic", ["$scope", "$location", "services", "utils", function ($scope, $location, services, utils) {
         $scope.topic = { tags: [] };
         $scope.submitted = false;
         $scope.addTag = function () {
@@ -14,21 +14,22 @@
         $scope.sendForm = function () {
             $scope.submitted = true;
             if ($scope.createTopicForm.$valid) {
-                topicService.topic.save($scope.topic, function (savedTopic) {
+                services.topic.save($scope.topic, function (savedTopic) {
                     $location.path(utils.topicCommentsLink(savedTopic));
                 });
             }
         }
     }])
-   .controller("viewTopic", ["$scope", "topicServices", "$routeParams", function ($scope, topicService, $routeParams) {
-       $scope.topic = topicService.topic.get({ id: $routeParams.topicId });
+   .controller("viewTopic", ["$scope", "services", "$routeParams", function ($scope, services, $routeParams) {
+       $scope.topic = services.topic.get({ id: $routeParams.topicId });
    }])
-   .controller("addComment", ["$scope", function ($scope) {
+   .controller("addComment", ["$scope",  "services", function ($scope, services) {
        $scope.sendForm = function () {
            $scope.submitted = true;
-           if ($scope.createTopicForm.$valid) {
-               topicService.comment.save($scope.topic, function (savedTopic) {
-                   $location.path(utils.topicCommentsLink(savedTopic));
+           if ($scope.addCommentForm.$valid) {
+               $scope.comment.topic_id = $scope.topic.id;
+               services.comment.save($scope.comment, function (savedComment) {
+                   $scope.topic.comments.push(savedComment);
                });
            }
        }

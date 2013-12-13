@@ -114,7 +114,6 @@
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\FilterCriteria.cs" />
     <Compile Include="Models\Topic.cs" />
-    <Compile Include="Models\TopicTag.cs" />
     <Compile Include="Repository\EntityMapper.cs" />
     <Compile Include="Repository\IndexFilterCriteria.cs" />
     <Compile Include="Repository\IndexMetadata.cs" />

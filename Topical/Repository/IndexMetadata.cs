@@ -4,12 +4,16 @@ using Lucene.Net.Documents;
 namespace Topical.Repository
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class IndexMetadata : Attribute
+    public class IndexAttribute : Attribute
     {
-        public Field.Index Index { get; set; }
+        /// <summary>
+        /// Gets or sets if an index is also stored. 
+        /// </summary>
+        public bool Store { get; set; }
 
-        public Field.Store Store { get; set; }
-
-        public bool IsKey { get; set; }
+        /// <summary>
+        /// Gets or sets if an index is analyzed. 
+        /// </summary>
+        public bool Analyzed { get; set; }
     }
 }

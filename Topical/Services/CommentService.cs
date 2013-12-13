@@ -1,30 +1,24 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Topical.Models;
+using Topical.Repository;
 
 namespace Topical.Services
 {
     public class CommentService : ICommentService
     {
-        //private readonly TopicalContext _context;
+        private readonly LuceneProvider _dbProvider;
 
-        //public CommentService(TopicalContext context)
-        //{
-        //    _context = context;
-        //}
+        public CommentService(LuceneProvider context)
+        {
+            _dbProvider = context;
+        }
 
-        //public async Task Add(string topicId, string parentCommentId, Comment comment)
-        //{
-        //    var topic = await _context.Topics.FindAsync(topicId);
-        //    if (topic == null)
-        //    {
-        //        throw new InvalidOperationException("Invalid topic id " + topicId);
-        //    }
-
-        //    topic.Comments.Add(comment);
-        //    comment.Topic = topic;
-        //    comment.ParentComment = new Comment { Id = parentCommentId };
-        //    await _context.SaveChangesAsync();
-        //}
+        public void Create(Comment comment)
+        {
+            comment.Id = IdProvider.GenerateId();
+            comment.CreatedDate = DateTimeOffset.UtcNow;
+            comment.LastModifiedDate = DateTimeOffset.UtcNow;
+            _dbProvider.AddRecord(comment);
+        }
     }
 }

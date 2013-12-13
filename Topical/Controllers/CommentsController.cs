@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Web.Http;
 using Topical.Models;
 using Topical.Services;
@@ -15,20 +14,15 @@ namespace Topical.Controllers
             _commentService = commentService;
         }
 
-        //public async Task<IHttpActionResult> Add(string topicId, string parentCommentId, Comment comment)
-        //{
-        //    if (String.IsNullOrEmpty(topicId))
-        //    {
-        //        return BadRequest("Missing topicId");
-        //    }
+        public IHttpActionResult CreateComment(Comment comment)
+        {
+            if (String.IsNullOrEmpty(comment.TopicId))
+            {
+                return BadRequest("TopicId is missing");
+            }
 
-        //    if (String.IsNullOrEmpty(comment.Text))
-        //    {
-        //        return BadRequest("Missing comment text");
-        //    }
-
-        //    await _commentService.Add(topicId, parentCommentId, comment);
-        //    return Ok(comment);
-        //}
+            _commentService.Create(comment);
+            return Ok(comment);
+        }
     }
 }

@@ -22,26 +22,31 @@ namespace Topical.Repository
             var properties = GetPropertyCache<TEntity>();
             foreach (PropertyInfo propertyInfo in properties)
             {
-                var indexMetadata = propertyInfo.GetCustomAttribute<IndexMetadata>();
+                var indexMetadata = propertyInfo.GetCustomAttribute<IndexAttribute>();
 
                 // Create a getter lambda () => (object)obj.Property;
-                var index = indexMetadata == null ? Field.Index.ANALYZED : indexMetadata.Index;
-                var store = indexMetadata == null ? Field.Store.YES : indexMetadata.Store;
-
-                if (indexMetadata != null && indexMetadata.IsKey)
+                bool index =  false;
+                var store = Field.Store.YES;
+                Field.Index indexValue = Field.Index.NO;
+                if (indexMetadata != null)
                 {
-                    index = Field.Index.NOT_ANALYZED;
+                    index = true;
+                    store = indexMetadata.Store ? Field.Store.YES : Field.Store.NO;
+                    indexValue = indexMetadata.Analyzed ? Field.Index.ANALYZED : Field.Index.NOT_ANALYZED;
                 }
 
                 string fieldName = propertyInfo.Name;
-                Func<object, object> getter = GetPropertyGetter(propertyInfo);
 
+                Func<object, object> getter = GetPropertyGetter(propertyInfo);
                 if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
                 {
-                    IEnumerable<object> collection = ((IEnumerable)getter(entity)).Cast<object>();
-                    foreach (var item in collection)
+                    IEnumerable enumerable = (IEnumerable)getter(entity);
+                    if (enumerable != null)
                     {
-                        document.Add(new Field(fieldName, item.ToString(), Field.Store.YES, Field.Index.ANALYZED));
+                        foreach (object item in enumerable)
+                        {
+                            document.Add(new Field(fieldName, item.ToString(), store, indexValue));
+                        }
                     }
                 }
                 else
@@ -52,23 +57,23 @@ namespace Topical.Repository
                         var value = (String)getter(entity);
                         if (!String.IsNullOrEmpty(value))
                         {
-                            fieldable = new Field(fieldName, value, store, index);
+                            fieldable = new Field(fieldName, value, store, indexValue);
                         }
                     }
                     else if (propertyInfo.PropertyType == typeof(int))
                     {
                         var value = (int)getter(entity);
-                        fieldable = new NumericField(fieldName, store, index: index != Field.Index.NO).SetIntValue(value);
+                        fieldable = new NumericField(fieldName, store, index).SetIntValue(value);
                     }
                     else if (propertyInfo.PropertyType == typeof(double))
                     {
                         var value = (double)getter(entity);
-                        fieldable = new NumericField(fieldName, store, index: index != Field.Index.NO).SetDoubleValue(value);
+                        fieldable = new NumericField(fieldName, store, index).SetDoubleValue(value);
                     }
                     else if (propertyInfo.PropertyType == typeof(DateTimeOffset))
                     {
                         long value = ((DateTimeOffset)getter(entity)).UtcTicks;
-                        fieldable = new NumericField(fieldName, store, index: index != Field.Index.NO).SetLongValue(value);
+                        fieldable = new NumericField(fieldName, store, index).SetLongValue(value);
                     }
                     else
                     {
@@ -144,13 +149,17 @@ namespace Topical.Repository
             return _getters.GetOrAdd(info, (PropertyInfo v) =>
             {
                 ParameterExpression instanceParameter = Expression.Parameter(typeof(object), "target");
-                return Expression.Lambda<Func<object, object>>(
-                    Expression.Property(
-                        Expression.Convert(instanceParameter, info.DeclaringType),
-                        info
-                    ),
-                    instanceParameter
-                ).Compile();
+                return 
+                    Expression.Lambda<Func<object, object>>(
+                        Expression.Convert(
+                            Expression.Property(
+                                Expression.Convert(instanceParameter, info.DeclaringType),
+                                info
+                            ),
+                            typeof(object)
+                        ),
+                        instanceParameter
+                    ).Compile();
             });
         }
 
@@ -160,10 +169,16 @@ namespace Topical.Repository
             {
                 ParameterExpression instanceParameter = Expression.Parameter(typeof(object), "target"),
                                     propertyValue = Expression.Parameter(typeof(object), "value");
-                Expression call = Expression.Property(Expression.Convert(instanceParameter, info.DeclaringType), info.Name);
-                Expression assignment = Expression.Assign(call, Expression.Convert(propertyValue, info.PropertyType));
-                return Expression.Lambda<Action<object, object>>(assignment, instanceParameter, propertyValue)
-                                 .Compile();
+                return
+                    Expression.Lambda<Action<object, object>>(
+                        Expression.Assign(
+                            Expression.Property(
+                                Expression.Convert(instanceParameter, info.DeclaringType), 
+                                info), 
+                            Expression.Convert(propertyValue, info.PropertyType)),
+                        instanceParameter,
+                        propertyValue
+                    ).Compile();
             });
         }
 

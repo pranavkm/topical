@@ -19,7 +19,7 @@ namespace Topical.Services
 
         public void Create(Topic topic)
         {
-            topic.Id = IdProvider.GenerateTopicId();
+            topic.Id = IdProvider.GenerateId();
             topic.CreatedOn = DateTimeOffset.UtcNow;
             topic.LastModifiedOn = DateTimeOffset.UtcNow;
             _dbProvider.AddRecord(topic);
