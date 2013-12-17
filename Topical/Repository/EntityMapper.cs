@@ -25,20 +25,45 @@ namespace Topical.Repository
                 var indexMetadata = propertyInfo.GetCustomAttribute<IndexAttribute>();
 
                 // Create a getter lambda () => (object)obj.Property;
-                bool index =  false;
+                bool index = false;
                 var store = Field.Store.YES;
                 Field.Index indexValue = Field.Index.NO;
                 if (indexMetadata != null)
                 {
                     index = true;
-                    store = indexMetadata.Store ? Field.Store.YES : Field.Store.NO;
                     indexValue = indexMetadata.Analyzed ? Field.Index.ANALYZED : Field.Index.NOT_ANALYZED;
                 }
 
                 string fieldName = propertyInfo.Name;
 
                 Func<object, object> getter = GetPropertyGetter(propertyInfo);
-                if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
+
+
+                IFieldable fieldable = null;
+                if (propertyInfo.PropertyType == typeof(string))
+                {
+                    var value = (String)getter(entity);
+                    if (!String.IsNullOrEmpty(value))
+                    {
+                        fieldable = new Field(fieldName, value, store, indexValue);
+                    }
+                }
+                else if (propertyInfo.PropertyType == typeof(int))
+                {
+                    var value = (int)getter(entity);
+                    fieldable = new NumericField(fieldName, store, index).SetIntValue(value);
+                }
+                else if (propertyInfo.PropertyType == typeof(double))
+                {
+                    var value = (double)getter(entity);
+                    fieldable = new NumericField(fieldName, store, index).SetDoubleValue(value);
+                }
+                else if (propertyInfo.PropertyType == typeof(DateTimeOffset))
+                {
+                    long value = ((DateTimeOffset)getter(entity)).UtcTicks;
+                    fieldable = new NumericField(fieldName, store, index).SetLongValue(value);
+                }
+                else if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
                 {
                     IEnumerable enumerable = (IEnumerable)getter(entity);
                     if (enumerable != null)
@@ -51,42 +76,15 @@ namespace Topical.Repository
                 }
                 else
                 {
-                    IFieldable fieldable = null;
-                    if (propertyInfo.PropertyType == typeof(string))
-                    {
-                        var value = (String)getter(entity);
-                        if (!String.IsNullOrEmpty(value))
-                        {
-                            fieldable = new Field(fieldName, value, store, indexValue);
-                        }
-                    }
-                    else if (propertyInfo.PropertyType == typeof(int))
-                    {
-                        var value = (int)getter(entity);
-                        fieldable = new NumericField(fieldName, store, index).SetIntValue(value);
-                    }
-                    else if (propertyInfo.PropertyType == typeof(double))
-                    {
-                        var value = (double)getter(entity);
-                        fieldable = new NumericField(fieldName, store, index).SetDoubleValue(value);
-                    }
-                    else if (propertyInfo.PropertyType == typeof(DateTimeOffset))
-                    {
-                        long value = ((DateTimeOffset)getter(entity)).UtcTicks;
-                        fieldable = new NumericField(fieldName, store, index).SetLongValue(value);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException("Property type " + propertyInfo.PropertyType + " is not supported");
-                    }
+                    throw new NotSupportedException("Property type " + propertyInfo.PropertyType + " is not supported");
+                }
 
-                    if (fieldable != null)
-                    {
-                        document.Add(fieldable);
-                    }
+
+                if (fieldable != null)
+                {
+                    document.Add(fieldable);
                 }
             }
-
             return document;
         }
 
@@ -118,7 +116,8 @@ namespace Topical.Repository
                 }
                 else if (propertyInfo.PropertyType == typeof(DateTimeOffset))
                 {
-                    DateTimeOffset dateTime;
+                    long ticks = Convert.ToInt64(field.StringValue);
+                    DateTimeOffset dateTime = 
                     if (DateTimeOffset.TryParse(field.StringValue, out dateTime))
                     {
                         setter(instance, dateTime);
@@ -149,7 +148,7 @@ namespace Topical.Repository
             return _getters.GetOrAdd(info, (PropertyInfo v) =>
             {
                 ParameterExpression instanceParameter = Expression.Parameter(typeof(object), "target");
-                return 
+                return
                     Expression.Lambda<Func<object, object>>(
                         Expression.Convert(
                             Expression.Property(
@@ -173,8 +172,8 @@ namespace Topical.Repository
                     Expression.Lambda<Action<object, object>>(
                         Expression.Assign(
                             Expression.Property(
-                                Expression.Convert(instanceParameter, info.DeclaringType), 
-                                info), 
+                                Expression.Convert(instanceParameter, info.DeclaringType),
+                                info),
                             Expression.Convert(propertyValue, info.PropertyType)),
                         instanceParameter,
                         propertyValue

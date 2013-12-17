@@ -10,7 +10,7 @@ namespace Topical
 
         public static string GenerateId()
         {
-            byte[] array = new byte[6];
+            byte[] array = new byte[5];
             using (var rng = new RNGCryptoServiceProvider())
             {
                 rng.GetBytes(array);

@@ -17,3 +17,18 @@
         </div>
     </form>
 </div>
+<div>
+    <script type="text/ng-template" id="comments_template">
+        <span class="small">{{comment.created_date}}</span>
+        <div class="comment" ng-bind-html="comment.text | markdown"></div>
+    </script>
+
+    <ul>
+        <li ng-repeat="comment in comments" ng-include="'comments_template'"></li>
+    </ul>
+
+    <ul>
+        
+    </ul>
+</div>
+

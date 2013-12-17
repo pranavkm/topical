@@ -50,13 +50,18 @@ namespace Topical.Repository
             return default(TEntity);
         }
 
-        public IEnumerable<TEntity> GetRecords<TEntity>(Query query = null, int n = 20)
+        public IEnumerable<TEntity> GetRecords<TEntity>(int n)
+        {
+            return GetRecords<TEntity>("*:*", n);
+        }
+
+        public IEnumerable<TEntity> GetRecords<TEntity>(string query, int n)
         {
             var reader = IndexReader.Open(GetIndexDirectory<TEntity>(), readOnly: true);
             using (var indexSearcher = new IndexSearcher(reader))
             {
-                Query nullQuery = new QueryParser(_version, "Id", new StandardAnalyzer(_version)).Parse("*:*");
-                TopDocs docs = indexSearcher.Search(query ?? nullQuery, n);
+                Query parsedQuery = new QueryParser(_version, "Id", new StandardAnalyzer(_version)).Parse(query);
+                TopDocs docs = indexSearcher.Search(parsedQuery, n);
                 return docs.ScoreDocs.Select(d => {
                     Document doc = reader.Document(d.Doc);
                     return _entityMapper.MapFromDocument<TEntity>(doc);

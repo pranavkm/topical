@@ -32,7 +32,7 @@ namespace Topical.Services
 
         public virtual IEnumerable<Topic> GetTopics()
         {
-            return _dbProvider.GetRecords<Topic>();
+            return _dbProvider.GetRecords<Topic>(n : 25);
         }
     }
 }

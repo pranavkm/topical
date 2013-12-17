@@ -22,14 +22,18 @@
     }])
    .controller("viewTopic", ["$scope", "services", "$routeParams", function ($scope, services, $routeParams) {
        $scope.topic = services.topic.get({ id: $routeParams.topicId });
+       $scope.comments = services.comment.query({ topicId: $routeParams.topicId });
    }])
-   .controller("addComment", ["$scope",  "services", function ($scope, services) {
+   .controller("addComment", ["$scope", "services", function ($scope, services) {
        $scope.sendForm = function () {
            $scope.submitted = true;
            if ($scope.addCommentForm.$valid) {
+               $scope.processing = true;
                $scope.comment.topic_id = $scope.topic.id;
                services.comment.save($scope.comment, function (savedComment) {
-                   $scope.topic.comments.push(savedComment);
+                   $scope.processing = false;
+                   $scope.addCommentForm.$setPristine();
+                   $scope.comments.push(savedComment);
                });
            }
        }

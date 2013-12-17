@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using Topical.Models;
 using Topical.Services;
@@ -23,6 +24,11 @@ namespace Topical.Controllers
 
             _commentService.Create(comment);
             return Ok(comment);
+        }
+
+        public IEnumerable<Comment> GetComments(string topicId)
+        {
+            return _commentService.GetComments(topicId, n: Int32.MaxValue);
         }
     }
 }
