@@ -15,12 +15,6 @@ namespace Topical.Controllers
             _topicService = topicService;
         }
 
-        // GET api/Topical
-        //public IEnumerable<Topic> GetTopics(FilterCriteria criteria)
-        //{
-        //    return _topicService.Get(criteria ?? FilterCriteria.Default);
-        //}
-
         //// GET api/Topical/5
         public IHttpActionResult GetTopic(string id)
         {

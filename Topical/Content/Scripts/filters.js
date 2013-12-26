@@ -16,6 +16,11 @@
                 return text && $sce.trustAsHtml(converter.makeHtml(text));
             }
         }])
+        .filter("ago", function () {
+            return function (text) {
+                return text && moment(text).fromNow();
+            }
+        })
 })();
 
 

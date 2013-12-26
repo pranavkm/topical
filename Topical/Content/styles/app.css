@@ -1,5 +1,33 @@
-﻿.comment-preview {
+﻿a:hover {
+    text-decoration: none !important;
+}
+
+.navbar-toggle .icon-bar {
+    background-color: black;
+}
+
+.comment-preview {
     font-size: smaller;
     margin: 10px auto auto 20px;
     opacity: 0.4;
+}
+
+.tag-label .action {
+    display: none;
+}
+
+.tag-label:hover .action {
+    display: inline;
+}
+
+.fit-maybe, .unfit-maybe {
+    color: white;
+}
+
+.fit-maybe:hover, .fit {
+    color: green;
+}
+
+.unfit-maybe:hover, .unfit {
+    color: orangered;
 }

@@ -38,3 +38,9 @@
            }
        }
    }])
+   .controller("replyComment", ["$scope", "services", function ($scope, services) {
+       $scope.startReply = function () {
+           $scope.showReplyComment = true;
+           return false;
+       }
+   }])

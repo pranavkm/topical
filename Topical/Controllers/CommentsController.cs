@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Web.Http;
 using Topical.Models;
 using Topical.Services;
+using Topical.ViewModel;
 
 namespace Topical.Controllers
 {
+    [RoutePrefix("api/topics/{topicId}")]
     public class CommentsController : ApiController
     {
         private readonly ICommentService _commentService;
@@ -15,6 +17,7 @@ namespace Topical.Controllers
             _commentService = commentService;
         }
 
+        [Route("comments")]
         public IHttpActionResult CreateComment(Comment comment)
         {
             if (String.IsNullOrEmpty(comment.TopicId))
@@ -26,9 +29,11 @@ namespace Topical.Controllers
             return Ok(comment);
         }
 
-        public IEnumerable<Comment> GetComments(string topicId)
+        [Route("comments")]
+        public IEnumerable<CommentViewModel> GetComments(string topicId)
         {
-            return _commentService.GetComments(topicId, n: Int32.MaxValue);
+            var comments = _commentService.GetComments(topicId, n: Int32.MaxValue);
+            return CommentViewModel.CreateCommentTree(topicId, comments);
         }
     }
 }

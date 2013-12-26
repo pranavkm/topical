@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -11,10 +12,12 @@ namespace Topical.Services
     public class TopicService : ITopicService
     {
         private readonly LuceneProvider _dbProvider;
+        private readonly ITagService _tagService;
 
-        public TopicService(LuceneProvider context)
+        public TopicService(LuceneProvider context, ITagService tagService)
         {
             _dbProvider = context;
+            _tagService = tagService;    
         }
 
         public void Create(Topic topic)
@@ -23,6 +26,9 @@ namespace Topical.Services
             topic.CreatedOn = DateTimeOffset.UtcNow;
             topic.LastModifiedOn = DateTimeOffset.UtcNow;
             _dbProvider.AddRecord(topic);
+
+            var tags = topic.Tags.Select(tag => new TopicTag { TagId = tag, TopicId = topic.Id });
+            _tagService.AddTags(tags);
         }
 
         public virtual Topic GetTopic(string id)

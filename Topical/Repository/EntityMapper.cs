@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 
 namespace Topical.Repository
 {
@@ -24,7 +27,6 @@ namespace Topical.Repository
             {
                 var indexMetadata = propertyInfo.GetCustomAttribute<IndexAttribute>();
 
-                // Create a getter lambda () => (object)obj.Property;
                 bool index = false;
                 var store = Field.Store.YES;
                 Field.Index indexValue = Field.Index.NO;
@@ -32,12 +34,11 @@ namespace Topical.Repository
                 {
                     index = true;
                     indexValue = indexMetadata.Analyzed ? Field.Index.ANALYZED : Field.Index.NOT_ANALYZED;
+                    store = indexMetadata.Store ? Field.Store.YES : Field.Store.NO;
                 }
 
                 string fieldName = propertyInfo.Name;
-
                 Func<object, object> getter = GetPropertyGetter(propertyInfo);
-
 
                 IFieldable fieldable = null;
                 if (propertyInfo.PropertyType == typeof(string))
@@ -117,11 +118,7 @@ namespace Topical.Repository
                 else if (propertyInfo.PropertyType == typeof(DateTimeOffset))
                 {
                     long ticks = Convert.ToInt64(field.StringValue);
-                    DateTimeOffset dateTime = 
-                    if (DateTimeOffset.TryParse(field.StringValue, out dateTime))
-                    {
-                        setter(instance, dateTime);
-                    }
+                    setter(instance, new DateTimeOffset(ticks, TimeSpan.Zero));
                 }
                 else if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
                 {
@@ -138,6 +135,22 @@ namespace Topical.Repository
             return instance;
         }
 
+        public Query GetLookupTerm<TEntity>(TEntity entity)
+        {
+            var indexProperties = GetPropertyCache<TEntity>().Where(IsKeyProperty);
+            var booleanQuery = new BooleanQuery();
+
+            foreach (var property in indexProperties)
+            {
+                var getter = GetPropertyGetter(property);
+                var value = (string)getter(entity);
+                var term = new Term(property.Name, value);
+                booleanQuery.Add(new TermQuery(term), Occur.MUST);
+            }
+
+            return booleanQuery;
+        }
+
         private PropertyInfo[] GetPropertyCache<TEntity>()
         {
             return _propertyCache.GetOrAdd(typeof(TEntity), type => type.GetProperties(BindingFlags.Public | BindingFlags.Instance));
@@ -145,6 +158,7 @@ namespace Topical.Repository
 
         private Func<object, object> GetPropertyGetter(PropertyInfo info)
         {
+            // Create a getter lambda () => (object)obj.Property;
             return _getters.GetOrAdd(info, (PropertyInfo v) =>
             {
                 ParameterExpression instanceParameter = Expression.Parameter(typeof(object), "target");
@@ -162,8 +176,9 @@ namespace Topical.Repository
             });
         }
 
-        public Action<object, object> GetPropertySetter(PropertyInfo info)
+        private Action<object, object> GetPropertySetter(PropertyInfo info)
         {
+            // Create a setter lambda (value) => obj.Property = (TProperty)value;
             return _setters.GetOrAdd(info, v =>
             {
                 ParameterExpression instanceParameter = Expression.Parameter(typeof(object), "target"),
@@ -179,6 +194,11 @@ namespace Topical.Repository
                         propertyValue
                     ).Compile();
             });
+        }
+
+        private bool IsKeyProperty(PropertyInfo property)
+        {
+            return property.IsDefined(typeof(IndexAttribute));
         }
 
         private sealed class FieldResult

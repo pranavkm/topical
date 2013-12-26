@@ -2,7 +2,8 @@
     "ngRoute",
     "controllers",
     "services",
-    "filters"
+    "filters",
+    "directives"
 ])
     .config(["$routeProvider", "$locationProvider",
         function ($routeProvider, $locationProvider) {

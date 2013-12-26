@@ -57,16 +57,42 @@ namespace Topical.Repository
 
         public IEnumerable<TEntity> GetRecords<TEntity>(string query, int n)
         {
-            var reader = IndexReader.Open(GetIndexDirectory<TEntity>(), readOnly: true);
+            Query parsedQuery = new QueryParser(_version, "Id", new StandardAnalyzer(_version)).Parse(query);
+            return GetRecords<TEntity>(parsedQuery, n);
+        }
+
+        public IEnumerable<TEntity> GetRecords<TEntity>(Query query, int n)
+        {
+            var directory = GetIndexDirectory<TEntity>();
+            if (!IndexReader.IndexExists(directory))
+            {
+                return Enumerable.Empty<TEntity>();
+            }
+
+            var reader = IndexReader.Open(directory, readOnly: true);
             using (var indexSearcher = new IndexSearcher(reader))
             {
-                Query parsedQuery = new QueryParser(_version, "Id", new StandardAnalyzer(_version)).Parse(query);
-                TopDocs docs = indexSearcher.Search(parsedQuery, n);
-                return docs.ScoreDocs.Select(d => {
+                TopDocs docs = indexSearcher.Search(query, n);
+                return docs.ScoreDocs.Select(d =>
+                {
                     Document doc = reader.Document(d.Doc);
                     return _entityMapper.MapFromDocument<TEntity>(doc);
                 });
             }
+        }
+
+        public void UpdateRecord<TEntity>(TEntity entity)
+        {
+            IndexWriter writer = EnsureWriter<TEntity>();
+            Document document = _entityMapper.MapToDocument(entity);
+            writer.DeleteDocuments(GetLookupQuery(entity));
+            writer.AddDocument(document);
+            writer.Commit();
+        }
+
+        public Query GetLookupQuery<TEntity>(TEntity entity)
+        {
+            return _entityMapper.GetLookupTerm(entity);
         }
 
         private IndexWriter EnsureWriter<TEntity>()

@@ -1,8 +1,16 @@
-﻿<h4><a ng-href="{{topic | topicLink}}">{{topic.title}}</a></h4>
-
+﻿<h3><a ng-href="{{topic | topicLink}}">{{topic.title}}</a></h3>
+<div class="small">
+    Created {{topic.created_on | ago}}
+</div>
 <ul class="list-inline">
-    <li ng-repeat="tag in topic.tags">
-        <span class="label label-default">{{tag}}</span>
+    <li ng-repeat="tag in topic.tags" class="h4">
+        <span class="label label-default tag-label">
+            {{tag}}
+            <span class="action">
+                <a class="glyphicon glyphicon-chevron-up fit-maybe"></a>
+                <a class="glyphicon glyphicon-chevron-down unfit-maybe"></a>
+            </span>
+        </span>
     </li>
 </ul>
 
@@ -18,17 +26,36 @@
     </form>
 </div>
 <div>
+    <script type="text/ng-template" id="comment_reply_template">
+    </script>
     <script type="text/ng-template" id="comments_template">
-        <span class="small">{{comment.created_date}}</span>
+        <span class="small">{{comment.created_on | ago}}</span>
         <div class="comment" ng-bind-html="comment.text | markdown"></div>
+        <div class="comment-actions" ng-controller="replyComment">
+            <ul class="list-inline">
+                <li>
+                    <a href="{{$location.url()/comment.id}}">link</a>
+                </li>
+                <li>
+                    <a href="" ng-click="startReply()">reply</a>
+                </li>
+            </ul>
+            <form role="form" name="replyCommentForm" novalidate ng-submit="sendForm()" ng-show="showReplyComment">
+                <div class="form-group" ng-class="{'has-error': (replyCommentForm.replyComment.$dirty || submitted) && replyCommentForm.replyComment.$invalid}">
+                    <textarea ng-focus="showReplyComment" name="replyComment" ng-model="replyComment.text" class="form-control" required></textarea>
+                    <div class="comment-preview" ng-show="replyComment.text" ng-bind-html="replyComment.text | markdown"></div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success btn-xs" type="submit">Comment</button>
+                </div>
+            </form>
+        </div>
     </script>
 
-    <ul>
-        <li ng-repeat="comment in comments" ng-include="'comments_template'"></li>
+    <ul class="list-unstyled" ng-repeat="comment in comments">
+        <li ng-include="'comments_template'"></li>
     </ul>
 
-    <ul>
-        
-    </ul>
+    <ul></ul>
 </div>
 

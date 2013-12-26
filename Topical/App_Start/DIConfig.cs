@@ -23,6 +23,10 @@ namespace Topical
                    .As<ICommentService>()
                    .InstancePerApiRequest();
 
+            builder.RegisterType<TagService>()
+                   .As<ITagService>()
+                   .InstancePerApiRequest();
+
             builder.RegisterApiControllers(typeof(DIConfig).Assembly);
 
             httpConfiguration.DependencyResolver = new AutofacWebApiDependencyResolver(builder.Build());
