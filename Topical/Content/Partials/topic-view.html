@@ -1,5 +1,7 @@
-﻿<h3><a ng-href="{{topic | topicLink}}">{{topic.title}}</a></h3>
-<div class="small">
+﻿<h3>
+    <a ng-href="{{topic | topicLink}}">{{topic.title}}</a>
+</h3>
+<div class="small text-muted">
     Created {{topic.created_on | ago}}
 </div>
 <ul class="list-inline">
@@ -29,12 +31,14 @@
     <script type="text/ng-template" id="comment_reply_template">
     </script>
     <script type="text/ng-template" id="comments_template">
-        <span class="small">{{comment.created_on | ago}}</span>
-        <div class="comment" ng-bind-html="comment.text | markdown"></div>
+        <div class="comment-text" ng-bind-html="comment.text | markdown"></div>
         <div class="comment-actions" ng-controller="replyComment">
             <ul class="list-inline">
                 <li>
-                    <a href="{{$location.url()/comment.id}}">link</a>
+                    <span class="text-muted">{{comment.created_on | ago}}</span>
+                </li>
+                <li>
+                    <a ng-href="{{$location.url()/comment.id}}">link</a>
                 </li>
                 <li>
                     <a href="" ng-click="startReply()">reply</a>
@@ -49,6 +53,9 @@
                     <button class="btn btn-success btn-xs" type="submit">Comment</button>
                 </div>
             </form>
+            <ul class="list-unstyled comment-responses" ng-repeat="comment in comment.children">
+                <li ng-include="'comments_template'"></li>
+            </ul>
         </div>
     </script>
 

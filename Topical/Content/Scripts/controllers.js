@@ -28,10 +28,9 @@
        $scope.sendForm = function () {
            $scope.submitted = true;
            if ($scope.addCommentForm.$valid) {
-               $scope.processing = true;
+               $scope.submitted = false;
                $scope.comment.topic_id = $scope.topic.id;
                services.comment.save($scope.comment, function (savedComment) {
-                   $scope.processing = false;
                    $scope.addCommentForm.$setPristine();
                    $scope.comments.push(savedComment);
                });
@@ -42,5 +41,22 @@
        $scope.startReply = function () {
            $scope.showReplyComment = true;
            return false;
+       }
+
+       $scope.sendForm = function () {
+           $scope.submitted = true;
+           if ($scope.replyCommentForm.$valid) {
+               $scope.submitted = false;
+               $scope.replyComment.topic_id = $scope.topic.id;
+               $scope.replyComment.parent_id = $scope.comment.id;
+               services.comment.save($scope.replyComment, function (savedComment) {
+                   $scope.showReplyComment = false;
+                   $scope.replyCommentForm.$setPristine();
+                   if (!$scope.comment.children) {
+                       $scope.comment.children = [];
+                   }
+                   $scope.comment.children.push(savedComment);
+               });
+           }
        }
    }])

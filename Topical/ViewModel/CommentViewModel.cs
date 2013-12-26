@@ -31,6 +31,7 @@ namespace Topical.ViewModel
                 if (!commentLookup.TryGetValue(comment.Id, out commentModel))
                 {
                     commentModel = new CommentViewModel();
+                    commentLookup.Add(comment.Id, commentModel);
                 }
                 
                 commentModel.Topic = topic;
@@ -48,7 +49,7 @@ namespace Topical.ViewModel
                         commentLookup.Add(comment.ParentId, parentComment);
                     }
 
-                    if (parentComment.Children != null)
+                    if (parentComment.Children == null)
                     {
                         parentComment.Children = new List<CommentViewModel>();
                     }

@@ -31,3 +31,15 @@
 .unfit-maybe:hover, .unfit {
     color: orangered;
 }
+
+.comment-text, .comment-details, .comment-actions {
+    font-size: 12px;
+}
+
+.comment-text p {
+    margin: 0;
+}
+
+ul.comment-responses {
+    margin: 10px auto auto 10px !important;
+}
