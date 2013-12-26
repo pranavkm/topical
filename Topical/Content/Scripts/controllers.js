@@ -1,6 +1,7 @@
 ﻿angular.module("controllers", ["utils"])
-    .controller("listTopics", ["$scope", "services", function ($scope, services) {
-        $scope.topics = services.topic.query();
+    .controller("listTopics", ["$scope", "services", "$routeParams", function ($scope, services, $routeParams) {
+        var tags = $routeParams.tags && $routeParams.tags.split(' ');
+        $scope.topics = services.topic.query({ tags: tags });
     }])
     .controller("createTopic", ["$scope", "$location", "services", "utils", function ($scope, $location, services, utils) {
         $scope.topic = { tags: [] };

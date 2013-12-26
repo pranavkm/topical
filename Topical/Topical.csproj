@@ -131,6 +131,7 @@
     <Compile Include="Services\TagService.cs" />
     <Compile Include="Services\TopicService.cs" />
     <Compile Include="ViewModel\CommentViewModel.cs" />
+    <Compile Include="Models\TopicFilter.cs" />
     <Compile Include="ViewModel\TopicViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

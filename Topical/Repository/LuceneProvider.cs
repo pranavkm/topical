@@ -14,7 +14,7 @@ namespace Topical.Repository
 {
     public class LuceneProvider : System.IDisposable
     {
-        private static readonly Lucene.Net.Util.Version _version = Lucene.Net.Util.Version.LUCENE_30;
+        internal static readonly Lucene.Net.Util.Version _version = Lucene.Net.Util.Version.LUCENE_30;
         private static ConcurrentDictionary<Type, IndexWriter> _indexWriters = new ConcurrentDictionary<Type, IndexWriter>();
         private readonly EntityMapper _entityMapper;
         private readonly string _rootDir;
@@ -52,7 +52,7 @@ namespace Topical.Repository
 
         public IEnumerable<TEntity> GetRecords<TEntity>(int n)
         {
-            return GetRecords<TEntity>("*:*", n);
+            return GetRecords<TEntity>(new MatchAllDocsQuery(), n);
         }
 
         public IEnumerable<TEntity> GetRecords<TEntity>(string query, int n)

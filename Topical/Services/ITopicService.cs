@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Topical.Models;
 
 namespace Topical.Services
@@ -10,6 +9,6 @@ namespace Topical.Services
 
         Topic GetTopic(string topicId);
 
-        IEnumerable<Topic> GetTopics();
+        IEnumerable<Topic> GetTopics(TopicFilter topicFilter);
     }
 }

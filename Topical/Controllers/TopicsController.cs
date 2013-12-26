@@ -37,9 +37,10 @@ namespace Topical.Controllers
             return Ok(topic);
         }
 
-        public IEnumerable<Topic> GetTopic()
+        public IEnumerable<Topic> GetTopic([FromUri]TopicFilter filter)
         {
-            return _topicService.GetTopics();
+            filter = filter ?? new TopicFilter();
+            return _topicService.GetTopics(filter);
         }
     }
 }

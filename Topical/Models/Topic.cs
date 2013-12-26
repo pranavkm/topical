@@ -15,7 +15,7 @@ namespace Topical.Models
 
         public string Description { get; set; }
 
-        [Index(Analyzed = true)]
+        [Index(Analyzed = false)]
         public List<string> Tags { get; set; }
 
         [Index]

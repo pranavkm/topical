@@ -7,7 +7,11 @@
             <a ng-href="{{topic | topicCommentsLink}}"><strong>Discuss</strong></a>
         </div>
         <ul class="list-inline col-xs-10 col-sm-11">
-            <li ng-repeat="tag in topic.tags | limitTo: 4"><span class="label label-default">{{tag}}</span></li>
+            <li ng-repeat="tag in topic.tags | limitTo: 4">
+                <a ng-href="/tags/{{tag}}">
+                    <span class="label label-default">{{tag}}</span>
+                </a> 
+            </li>
         </ul>
     </dd>
 </dl>
