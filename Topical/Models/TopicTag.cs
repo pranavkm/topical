@@ -7,7 +7,7 @@ namespace Topical.Models
         [Index(Analyzed=false, Store=false)]
         public string TopicId { get; set; }
 
-        [Index(Analyzed = true, Store = false)]
+        [Index(Analyzed = false, Store = true)]
         public string TagId { get; set; }
 
         public int Tally { get; set; }

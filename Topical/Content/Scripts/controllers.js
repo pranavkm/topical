@@ -24,6 +24,32 @@
    .controller("viewTopic", ["$scope", "services", "$routeParams", function ($scope, services, $routeParams) {
        $scope.topic = services.topic.get({ id: $routeParams.topicId });
        $scope.comments = services.comment.query({ topicId: $routeParams.topicId });
+       $scope.ensureTagData = function () {
+           if (!$scope.tagDataReceived) {
+               $scope.tagDataReceived = true;
+               services.topic.getTags({id: $scope.topic.id}, function (tags) {
+                   $scope.tagDataReceived = true;
+                   var map = [];
+                   tags.forEach(function (t) {
+                       map[t.tag_id] = t;
+                   });
+                   for (var i = 0; i < $scope.topic.tags.length; i++) {
+                       $scope.topic.tags[i] = map[$scope.topic.tags[i]];
+                   }
+               });
+           }
+       }
+       $scope.tagColor = function (tag) {
+           if (tag.fit || tag.unfit) {
+               var total = (tag.fit + tag.unfit),
+                   r = Math.ceil(tag.unfit / total),
+                   g = Math.ceil(tag.fit / total);
+
+               return 'rgb(' + r + ',' + g + ',0}';
+           }
+
+           return "";
+       }
    }])
    .controller("addComment", ["$scope", "services", function ($scope, services) {
        $scope.sendForm = function () {

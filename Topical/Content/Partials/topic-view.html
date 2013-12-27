@@ -4,13 +4,16 @@
 <div class="small text-muted">
     Created {{topic.created_on | ago}}
 </div>
-<ul class="list-inline">
+<div class="panel panel-default" ng-show="topic.description">
+    <div class="panel-body" ng-bind-html="topic.description | markdown"></div>
+</div>
+<ul class="list-inline" ng-mouseover="ensureTagData()">
     <li ng-repeat="tag in topic.tags" class="h4">
-        <span class="label label-default tag-label">
-            {{tag}}
+        <span class="label label-default tag-label" ng-style="{'background-color': tagColor(tag) }">
+            {{tag.tag_id || tag}}
             <span class="action">
-                <a class="glyphicon glyphicon-chevron-up fit-maybe"></a>
-                <a class="glyphicon glyphicon-chevron-down unfit-maybe"></a>
+                <a class="glyphicon glyphicon-chevron-up" title="{{tag.fit}}" ng-click="vote(1)"></a>
+                <a class="glyphicon glyphicon-chevron-down" title="{{tag.unfit}}" ng-click="vote(-1)"></a>
             </span>
         </span>
     </li>

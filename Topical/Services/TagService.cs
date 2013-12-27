@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Topical.Models;
 using Topical.Repository;
 
@@ -16,6 +18,12 @@ namespace Topical.Services
             _dbProvider = context;
         }
 
+
+        public IEnumerable<TopicTag> GetTags(string topicId)
+        {
+            var query = new TermQuery(new Term("TopicId", topicId));
+            return _dbProvider.GetRecords<TopicTag>(query, n: 100);
+        }
 
         public void AddTags(IEnumerable<TopicTag> topicTags)
         {
