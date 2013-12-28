@@ -9,6 +9,6 @@ namespace Topical.Services
 
         void AddTags(IEnumerable<TopicTag> topicTags);
 
-        void AddTagVote(TopicTag topicTag, int vote);
+        TopicTag AddTagVote(string topicId, string tagId, int vote);
     }
 }

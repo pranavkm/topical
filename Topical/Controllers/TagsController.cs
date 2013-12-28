@@ -26,8 +26,9 @@ namespace Topical.Controllers
             return Ok(_tagService.GetTags(topicId));
         }
 
-        [Route("tag/{tagId}")]
-        public IHttpActionResult Post(string topicId, string tagId, int vote)
+        [Route("tags/{tagId}")]
+        [HttpPut]
+        public IHttpActionResult Vote(string topicId, string tagId, int vote)
         {
             if (String.IsNullOrEmpty(topicId))
             {
@@ -38,7 +39,12 @@ namespace Topical.Controllers
                 return BadRequest();
             }
 
-            return Ok((object)null);
+            TopicTag tag = _tagService.AddTagVote(topicId, tagId, vote);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+            return Ok(tag);
         }
     }
 }

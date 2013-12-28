@@ -12,11 +12,11 @@
     opacity: 0.4;
 }
 
-.tag-label .action {
+.tags-list .action {
     display: none;
 }
 
-.tag-label:hover .action {
+.tags-list:hover .action {
     display: inline;
 }
 
@@ -25,11 +25,11 @@
 }
 
 .fit-maybe:hover, .fit {
-    color: green;
+    color: #00ff00;
 }
 
 .unfit-maybe:hover, .unfit {
-    color: orangered;
+    color: #ff0000;
 }
 
 .comment-text, .comment-details, .comment-actions {

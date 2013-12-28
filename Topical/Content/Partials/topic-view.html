@@ -7,14 +7,15 @@
 <div class="panel panel-default" ng-show="topic.description">
     <div class="panel-body" ng-bind-html="topic.description | markdown"></div>
 </div>
-<ul class="list-inline" ng-mouseover="ensureTagData()">
-    <li ng-repeat="tag in topic.tags" class="h4">
+<ul class="list-inline tags-list" ng-mouseover="onTagHover()" ng-controller="topicTags">
+    <li ng-repeat="tag in topic.tags" class="ng-scope h4">
         <span class="label label-default tag-label" ng-style="{'background-color': tagColor(tag) }">
-            {{tag.tag_id || tag}}
             <span class="action">
-                <a class="glyphicon glyphicon-chevron-up" title="{{tag.fit}}" ng-click="vote(1)"></a>
-                <a class="glyphicon glyphicon-chevron-down" title="{{tag.unfit}}" ng-click="vote(-1)"></a>
+                <a class="glyphicon glyphicon-chevron-up ng-class: tag.fit-ticked ? 'fit' : 'fit-maybe'" title="{{tag.fit}}" ng-click="vote(tag, 1)"></a>
+                <a class="glyphicon glyphicon-chevron-down ng-class: tag.unfit-ticked ? 'unfit' : 'unfit-maybe'" title="{{tag.unfit}}" ng-click="vote(tag, -1)"></a>
+                &nbsp;
             </span>
+            {{tag.tag_id || tag}}
         </span>
     </li>
 </ul>

@@ -33,16 +33,17 @@ namespace Topical.Services
             });
         }
 
-        public void AddTagVote(TopicTag topicTag, int vote)
+        public TopicTag AddTagVote(string topicId, string tagId, int vote)
         {
-            var tagQuery = _dbProvider.GetLookupQuery(topicTag);
-            var currentTag = _dbProvider.GetRecords<TopicTag>(tagQuery, n: 1)
-                                        .FirstOrDefault();
-
-            if (currentTag == null)
+            var tagQuery = GetLookupQuery(topicId, tagId);
+            var topicTag = _dbProvider.GetRecord<TopicTag>(tagQuery);
+            
+            if (topicTag == null)
             {
-                return;
+                return null;
             }
+
+            vote = vote >= 0 ? 1 : -1;
             if (vote < 0)
             {
                 topicTag.Unfit -= 1;
@@ -55,6 +56,21 @@ namespace Topical.Services
             }
 
             _dbProvider.UpdateRecord(topicTag);
+
+            return topicTag;
+        }
+
+        private Query GetLookupQuery(string topicId, string tagId)
+        {
+            var query = new BooleanQuery();
+            query.Add(new TermQuery(new Term("TopicId", topicId)), Occur.MUST);
+
+            if (!String.IsNullOrEmpty(tagId))
+            {
+                query.Add(new TermQuery(new Term("TagId", tagId)), Occur.MUST);
+            }
+
+            return query;
         }
     }
 }

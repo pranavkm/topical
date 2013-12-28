@@ -18,6 +18,8 @@ namespace Topical.Models
         [Index]
         public List<string> AncestorIds { get; set; }
 
+        public string SubmittedBy { get; set; }
+
         public string Text { get; set; }
 
         public int Depth { get; set; }

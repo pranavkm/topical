@@ -15,6 +15,8 @@ namespace Topical.Models
 
         public string Description { get; set; }
 
+        public string SubmittedBy { get; set; }
+
         [Index(Analyzed = false)]
         public List<string> Tags { get; set; }
 

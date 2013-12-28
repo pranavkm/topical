@@ -15,7 +15,7 @@ namespace Topical.Repository
     public class LuceneProvider : System.IDisposable
     {
         internal static readonly Lucene.Net.Util.Version _version = Lucene.Net.Util.Version.LUCENE_30;
-        private static ConcurrentDictionary<Type, IndexWriter> _indexWriters = new ConcurrentDictionary<Type, IndexWriter>();
+        private static ConcurrentDictionary<Type, Lazy<IndexWriter>> _indexWriters = new ConcurrentDictionary<Type, Lazy<IndexWriter>>();
         private readonly EntityMapper _entityMapper;
         private readonly string _rootDir;
 
@@ -36,6 +36,11 @@ namespace Topical.Repository
         public TEntity GetRecord<TEntity>(string id)
         {
             Query query = new TermQuery(new Term("Id", id));
+            return GetRecord<TEntity>(query);
+        }
+
+        public TEntity GetRecord<TEntity>(Query query)
+        {
             var reader = IndexReader.Open(GetIndexDirectory<TEntity>(), readOnly: true);
             using (var indexSearcher = new IndexSearcher(reader))
             {
@@ -98,10 +103,12 @@ namespace Topical.Repository
         private IndexWriter EnsureWriter<TEntity>()
         {
             return _indexWriters.GetOrAdd(typeof(TEntity), _ =>
-            {
-                var fsDirectory = GetIndexDirectory<TEntity>();
-                return new IndexWriter(fsDirectory, new StandardAnalyzer(_version), mfl: IndexWriter.MaxFieldLength.UNLIMITED);
-            });
+                new Lazy<IndexWriter>(() =>
+                {
+                    var fsDirectory = GetIndexDirectory<TEntity>();
+                    return new IndexWriter(fsDirectory, new StandardAnalyzer(_version), mfl: IndexWriter.MaxFieldLength.UNLIMITED);
+                })
+            ).Value;
         }
 
         private SimpleFSDirectory GetIndexDirectory<TEntity>()
@@ -114,7 +121,7 @@ namespace Topical.Repository
 
         public void Dispose()
         {
-            foreach (var item in _indexWriters)
+            foreach (var item in _indexWriters.Values)
             {
                 item.Value.Dispose();
             }

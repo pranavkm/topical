@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
-using Lucene.Net.Search;
 using Topical.Models;
 using Topical.Repository;
 
@@ -22,6 +20,20 @@ namespace Topical.Services
             comment.Id = IdProvider.GenerateId();
             comment.CreatedDate = DateTimeOffset.UtcNow;
             comment.LastModifiedDate = DateTimeOffset.UtcNow;
+            if (!String.IsNullOrEmpty(comment.ParentId))
+            {
+                Comment parentComment = _dbProvider.GetRecord<Comment>(comment.ParentId);
+                if (parentComment == null)
+                {
+                    comment.ParentId = null;
+                }
+                else
+                {
+                    comment.AncestorIds = parentComment.AncestorIds;
+                    comment.AncestorIds.Add(parentComment.Id);
+                }
+            }
+
             _dbProvider.AddRecord(comment);
         }
 
