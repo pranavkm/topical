@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Topical.Infrastructure;
+using Topical.Services;
 
 namespace Topical
 {
@@ -19,6 +20,8 @@ namespace Topical
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.MessageHandlers.Add(new BasicAuthHandler(config.DependencyResolver));
         }
     }
 }

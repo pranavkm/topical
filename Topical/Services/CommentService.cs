@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lucene.Net.QueryParsers;
+using System.Web.Http;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Topical.Models;
 using Topical.Repository;
 
@@ -15,6 +17,7 @@ namespace Topical.Services
             _dbProvider = context;
         }
 
+        [Authorize]
         public void Create(Comment comment)
         {
             comment.Id = IdProvider.GenerateId();
@@ -39,7 +42,7 @@ namespace Topical.Services
 
         public IEnumerable<Comment> GetComments(string topicId, int n)
         {
-            string query = "TopicId:\"" + QueryParser.Escape(topicId) + '"';
+            Query query = new TermQuery(new Term("TopicId", topicId));
             return _dbProvider.GetRecords<Comment>(query, n);
         }
     }

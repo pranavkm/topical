@@ -1,4 +1,17 @@
 ﻿angular.module("controllers", ["utils"])
+    .controller("account")
+    .controller("login", ["$scope", "services", "$rootScope", function($scope, services, $rootScope) {
+        $scope.sendForm = function () {
+            $scope.submitted = true;
+            if ($scope.registerForm.$valid) {
+                services.user.save($scope.user, function (savedUser) {
+                    $rootScope.user = savedUser;
+                })
+            }
+        }
+    }])
+    .controller("register", function () {
+    })
     .controller("listTopics", ["$scope", "services", "$routeParams", function ($scope, services, $routeParams) {
         var tags = $routeParams.tags && $routeParams.tags.split(' ');
         $scope.topics = services.topic.query({ tags: tags });

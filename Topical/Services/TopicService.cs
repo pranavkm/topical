@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Topical.Models;
@@ -22,6 +20,7 @@ namespace Topical.Services
             _tagService = tagService;    
         }
 
+        [Authorize]
         public void Create(Topic topic)
         {
             topic.Id = IdProvider.GenerateId();

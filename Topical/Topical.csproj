@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\images\topical.png" />
+    <Content Include="Content\Partials\account.html" />
     <Content Include="Content\Partials\topic-create.html" />
     <Content Include="Content\Partials\topic-link.html" />
     <Content Include="Content\Partials\topic-view.html" />
@@ -112,15 +113,19 @@
     <Compile Include="Controllers\TagsController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\TopicsController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\BasicAuthHandler.cs" />
+    <Compile Include="Infrastructure\CryptoProvider.cs" />
     <Compile Include="Infrastructure\IdProvider.cs" />
     <Compile Include="Infrastructure\SnakeCaseContractResolver.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\FilterCriteria.cs" />
     <Compile Include="Models\Topic.cs" />
     <Compile Include="Models\TopicTag.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Repository\EntityMapper.cs" />
     <Compile Include="Repository\IndexFilterCriteria.cs" />
     <Compile Include="Repository\IndexAttribute.cs" />
@@ -130,11 +135,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ITagService.cs" />
     <Compile Include="Services\ITopicService.cs" />
+    <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\TagService.cs" />
     <Compile Include="Services\TopicService.cs" />
+    <Compile Include="Services\UserService.cs" />
     <Compile Include="ViewModel\CommentViewModel.cs" />
     <Compile Include="Models\TopicFilter.cs" />
+    <Compile Include="ViewModel\RegisterUserViewModel.cs" />
     <Compile Include="ViewModel\TopicViewModel.cs" />
+    <Compile Include="ViewModel\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

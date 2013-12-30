@@ -4,7 +4,8 @@
     <title>Topical</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.0.2/flatly/bootstrap.min.css" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.0.2/cosmo/bootstrap.min.css" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
     <link rel="stylesheet" href="/content/styles/app.css" />
     <link rel="shortcut icon" href="/content/images/topical.png">
 </head>
@@ -25,10 +26,27 @@
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="navbarLinks">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-left">
                     <li>
                         <a href="/topic/create">
                             <i class="glyphicon glyphicon-plus"></i> Topic
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li ng-show="!user">
+                        <a href="/user" title="Sign in">
+                            <i class="fa fa-sign-in"></i>
+                        </a>
+                    </li>
+                    <li ng-show="user">
+                        <a href="/user/{{user}}" title="{{user}}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                        </a>
+                    </li>
+                    <li ng-show="user">
+                        <a href="/user/logout" title="Sign out">
+                            <i class="fa fa-sign-out"></i>
                         </a>
                     </li>
                 </ul>

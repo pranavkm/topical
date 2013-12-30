@@ -12,6 +12,7 @@
                        url: "/api/topics/:id/tags/:tagId"
                    }
                }),
-               comment: $resource("/api/topics/:topicId/comments/:id", { id: "@id", topicId: "@topic_id" })
+               comment: $resource("/api/topics/:topicId/comments/:id", { id: "@id", topicId: "@topic_id" }),
+               user: $resource("/api/user/:id", { id: "@user_name" })
            };
        });

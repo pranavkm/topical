@@ -26,6 +26,10 @@
                     templateUrl: "content/partials/topic-list.html",
                     controller: "listTopics"
                 })
+                .when("/user", {
+                    templateUrl: "content/partials/account.html",
+                    ontroller: "account"
+                })
         }
     ])
 
